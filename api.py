@@ -26,6 +26,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 app = Flask(__name__)
 
 
+@app.route("/")
+def main():
+    return "OKAY"
+
+
 def get_large_url(text):
     replacement = text.split("/")[-2].replace("s", "l")
     replacement = text.split("/")[-2].replace("s", "l")
