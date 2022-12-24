@@ -1,6 +1,5 @@
 from flask import Flask, request
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 from flask import Flask, request, redirect, url_for, session, json
 
@@ -321,4 +320,4 @@ def register():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False, host="0.0.0.0", port=5000)
