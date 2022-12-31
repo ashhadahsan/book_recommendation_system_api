@@ -48,7 +48,7 @@ con.close()
 import random
 
 
-@app.route("/api/books/featured")
+@app.route("/api/books/featured", methods=["GET", "POST"])
 def get_random(n=10):
     data = request.get_json()
     n = data["n"]
