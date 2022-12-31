@@ -11,7 +11,7 @@ app.config["CORS_HEADERS"] = "Content-Type"
 cors = CORS(
     app,
     resources={
-        r"/api/*": {
+        r"/*": {
             "origins": [
                 "http://localhost:3000",
             ]
