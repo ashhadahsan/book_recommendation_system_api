@@ -1,18 +1,21 @@
-var axios = require("axios").default;
+var axios = require('axios');
+var data = JSON.stringify({
+  "n": 10
+});
 
-var options = {
-  method: 'GET',
-  url: 'https://book-rec.herokuapp.com/books/top',
-  headers: {
-    Accept: '*/*',
-    'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
+var config = {
+  method: 'get',
+  url: 'https://book-rec.herokuapp.com/api/books/featured',
+  headers: { 
     'Content-Type': 'application/json'
   },
-  data: {n: 10}
+  data : data
 };
 
-axios.request(options).then(function (response) {
-  console.log(response.data);
-}).catch(function (error) {
-  console.error(error);
+axios(config)
+.then(function (response) {
+  console.log(JSON.stringify(response.data));
+})
+.catch(function (error) {
+  console.log(error);
 });
