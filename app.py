@@ -11,7 +11,7 @@ app.config["CORS_HEADERS"] = "Content-Type"
 cors = CORS(
     app,
     resources={
-        r"/*": {
+        r"/api/*": {
             "origins": [
                 "http://localhost:3000",
             ]
@@ -56,7 +56,7 @@ import random
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/books/featured", defaults={"n": 10})
+@app.route("/api/books/featured", defaults={"n": 10})
 def get_random(n=10):
     data = request.get_json()
     n = data["n"]
@@ -89,7 +89,7 @@ def get_random(n=10):
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/books/search")
+@app.route("/api/books/search")
 def find():
 
     con = sql.connect("database.db")
@@ -145,7 +145,7 @@ import operator
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/books/recommend")
+@app.route("/api/books/recommend")
 def recommend():
     data = request.get_json()
     id = data["id"]
@@ -180,7 +180,7 @@ def recommend():
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/books/details")
+@app.route("/api//books/details")
 def get_by_id():
     data = request.get_json()
     book_id = data["id"]
@@ -211,7 +211,7 @@ def get_by_id():
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/books/top")
+@app.route("/api/books/top")
 def top_rated():
     data = request.get_json()
     n = data["n"]
@@ -250,7 +250,7 @@ def top_rated():
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/user/login", methods=["POST"])
+@app.route("/api/user/login", methods=["POST"])
 def login():
     msg = ""
     data = request.get_json()
@@ -286,7 +286,7 @@ def login():
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/user/logout")
+@app.route("/api/user/logout")
 def logout():
     session.pop("loggedin", None)
     session.pop("id", None)
@@ -295,7 +295,7 @@ def logout():
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/user/register", methods=["POST"])
+@app.route("/api/user/register", methods=["POST"])
 def register():
     msg = ""
     data = request.get_json()
