@@ -56,7 +56,7 @@ import random
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api/books/featured", defaults={"n": 10})
+@app.route("/api/books/featured", defaults={"n": 10}, methods=["GET"])
 def get_random(n=10):
     data = request.get_json()
     n = data["n"]
@@ -89,7 +89,7 @@ def get_random(n=10):
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api/books/search")
+@app.route("/api/books/search", methods=["GET"])
 def find():
 
     con = sql.connect("database.db")
@@ -145,7 +145,7 @@ import operator
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api/books/recommend")
+@app.route("/api/books/recommend", methods=["GET"])
 def recommend():
     data = request.get_json()
     id = data["id"]
@@ -180,7 +180,7 @@ def recommend():
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api//books/details")
+@app.route("/api//books/details", methods=["GET"])
 def get_by_id():
     data = request.get_json()
     book_id = data["id"]
@@ -211,7 +211,7 @@ def get_by_id():
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api/books/top")
+@app.route("/api/books/top", methods=["GET"])
 def top_rated():
     data = request.get_json()
     n = data["n"]
@@ -286,7 +286,7 @@ def login():
 
 
 @cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api/user/logout")
+@app.route("/api/user/logout", methods=["GET"])
 def logout():
     session.pop("loggedin", None)
     session.pop("id", None)
