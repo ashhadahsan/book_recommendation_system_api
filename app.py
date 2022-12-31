@@ -29,7 +29,6 @@ conn.execute(
 app = Flask(__name__)
 
 
-@cross_origin(headers=["Content- Type", "Authorization"])
 @app.route("/")
 def main():
     return "OKAY"
@@ -53,8 +52,7 @@ con.close()
 import random
 
 
-@cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api/books/featured", defaults={"n": 10}, methods=["GET"])
+@app.route("/api/books/featured", defaults={"n": 10}, methods=["GET", "POST"])
 def get_random(n=10):
     data = request.get_json()
     n = data["n"]
@@ -86,8 +84,7 @@ def get_random(n=10):
         )
 
 
-@cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api/books/search", methods=["GET"])
+@app.route("/api/books/search", methods=["GET", "POST"])
 def find():
 
     con = sql.connect("database.db")
@@ -142,8 +139,7 @@ import functools
 import operator
 
 
-@cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api/books/recommend", methods=["GET"])
+@app.route("/api/books/recommend", methods=["GET", "POST"])
 def recommend():
     data = request.get_json()
     id = data["id"]
@@ -177,8 +173,7 @@ def recommend():
         return response
 
 
-@cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api//books/details", methods=["GET"])
+@app.route("/api//books/details", methods=["GET", "POST"])
 def get_by_id():
     data = request.get_json()
     book_id = data["id"]
@@ -208,8 +203,7 @@ def get_by_id():
         return response
 
 
-@cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api/books/top", methods=["GET"])
+@app.route("/api/books/top", methods=["GET", "POST"])
 def top_rated():
     data = request.get_json()
     n = data["n"]
@@ -247,8 +241,7 @@ def top_rated():
         return response
 
 
-@cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api/user/login", methods=["POST"])
+@app.route("/api/user/login", methods=["GET", "POST"])
 def login():
     msg = ""
     data = request.get_json()
@@ -283,8 +276,7 @@ def login():
         return response
 
 
-@cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api/user/logout", methods=["GET"])
+@app.route("/api/user/logout", methods=["GET", "POST"])
 def logout():
     session.pop("loggedin", None)
     session.pop("id", None)
@@ -292,8 +284,7 @@ def logout():
     return redirect(url_for("login"))
 
 
-@cross_origin(headers=["Content- Type", "Authorization"])
-@app.route("/api/user/register", methods=["POST"])
+@app.route("/api/user/register", methods=["GET", "POST"])
 def register():
     msg = ""
     data = request.get_json()
