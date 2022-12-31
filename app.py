@@ -4,8 +4,9 @@ import pandas as pd
 from flask import Flask, request, redirect, url_for, session, json
 
 app = Flask(__name__)
-app.secret_key = r"B-\x11n\xb5{0y\xb7\xc5\xee\xb4\xdeL-\x9fR\xf2I\xe8\xbe\xc7\xe8R"
+app.config["SECRET_KEY"] = "the quick brown fox jumps over the lazy   dog"
 
+app.config["CORS_HEADERS"] = "Content-Type"
 import sqlite3 as sql
 
 conn = sql.connect("database.db")
