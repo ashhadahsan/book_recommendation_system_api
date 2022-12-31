@@ -2,11 +2,22 @@ from flask import Flask, request
 import numpy as np
 import pandas as pd
 from flask import Flask, request, redirect, url_for, session, json
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "the quick brown fox jumps over the lazy   dog"
 
 app.config["CORS_HEADERS"] = "Content-Type"
+cors = CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:3000",
+            ]
+        }
+    },
+)
 import sqlite3 as sql
 
 conn = sql.connect("database.db")
@@ -16,16 +27,11 @@ conn.execute(
     "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT,username VARCHAR(50) NOT NULL,password VARCHAR(50) NOT NULL,email VARCHAR(50) NOT NULL)"
 )
 
-# Sklearn
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-
-
-# Tuircreate
 
 app = Flask(__name__)
 
 
+@cross_origin(headers=["Content- Type", "Authorization"])
 @app.route("/")
 def main():
     return "OKAY"
@@ -49,6 +55,7 @@ con.close()
 import random
 
 
+@cross_origin(headers=["Content- Type", "Authorization"])
 @app.route("/books/featured", defaults={"n": 10})
 def get_random(n=10):
     data = request.get_json()
@@ -81,6 +88,7 @@ def get_random(n=10):
         )
 
 
+@cross_origin(headers=["Content- Type", "Authorization"])
 @app.route("/books/search")
 def find():
 
@@ -136,6 +144,7 @@ import functools
 import operator
 
 
+@cross_origin(headers=["Content- Type", "Authorization"])
 @app.route("/books/recommend")
 def recommend():
     data = request.get_json()
@@ -170,6 +179,7 @@ def recommend():
         return response
 
 
+@cross_origin(headers=["Content- Type", "Authorization"])
 @app.route("/books/details")
 def get_by_id():
     data = request.get_json()
@@ -200,6 +210,7 @@ def get_by_id():
         return response
 
 
+@cross_origin(headers=["Content- Type", "Authorization"])
 @app.route("/books/top")
 def top_rated():
     data = request.get_json()
@@ -238,6 +249,7 @@ def top_rated():
         return response
 
 
+@cross_origin(headers=["Content- Type", "Authorization"])
 @app.route("/user/login", methods=["POST"])
 def login():
     msg = ""
@@ -273,6 +285,7 @@ def login():
         return response
 
 
+@cross_origin(headers=["Content- Type", "Authorization"])
 @app.route("/user/logout")
 def logout():
     session.pop("loggedin", None)
@@ -281,6 +294,7 @@ def logout():
     return redirect(url_for("login"))
 
 
+@cross_origin(headers=["Content- Type", "Authorization"])
 @app.route("/user/register", methods=["POST"])
 def register():
     msg = ""
@@ -321,4 +335,4 @@ def register():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", debug=False)
