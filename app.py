@@ -48,7 +48,7 @@ con.close()
 import random
 
 
-@app.route("/api/books/featured", methods=["GET", "POST"])
+@app.route("/api/books/featured", methods=["POST"])
 def get_random(n=10):
     data = request.get_json()
     n = data["n"]
@@ -80,7 +80,7 @@ def get_random(n=10):
         )
 
 
-@app.route("/api/books/search", methods=["GET", "POST"])
+@app.route("/api/books/search", methods=["POST"])
 def find():
 
     con = sql.connect("database.db")
@@ -135,7 +135,7 @@ import functools
 import operator
 
 
-@app.route("/api/books/recommend", methods=["GET", "POST"])
+@app.route("/api/books/recommend", methods=["POST"])
 def recommend():
     data = request.get_json()
     id = data["id"]
@@ -169,7 +169,7 @@ def recommend():
         return response
 
 
-@app.route("/api//books/details", methods=["GET", "POST"])
+@app.route("/api/books/details", methods=["POST"])
 def get_by_id():
     data = request.get_json()
     book_id = data["id"]
@@ -199,7 +199,7 @@ def get_by_id():
         return response
 
 
-@app.route("/api/books/top", methods=["GET", "POST"])
+@app.route("/api/books/top", methods=["POST"])
 def top_rated():
     data = request.get_json()
     n = data["n"]
