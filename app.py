@@ -1,8 +1,7 @@
 from flask import Flask, request
-import numpy as np
 import pandas as pd
 from flask import Flask, request, redirect, url_for, session, json
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "the quick brown fox jumps over the lazy   dog"
@@ -18,16 +17,74 @@ cors = CORS(
 )
 import sqlite3 as sql
 
-conn = sql.connect("database.db")
+con = sql.connect("database.db")
 
-conn.execute(
+con.execute(
     "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT,username VARCHAR(50) NOT NULL,password VARCHAR(50) NOT NULL,email VARCHAR(50) NOT NULL)"
+)
+
+con.execute(
+    """CREATE TABLE IF NOT EXISTS fvrts (fvrt_id INTEGER PRIMARY KEY AUTOINCREMENT,book_id INTEGER,user_id INTEGER NOT NULL, CONSTRAINT fk_users
+    FOREIGN KEY (user_id)
+    REFERENCES users(id))"""
 )
 
 
 @app.route("/")
 def main():
     return "OKAY"
+
+
+@app.route("/api/books/addFvrts", methods=["POST"])
+def add_fvrt():
+    request_d = request.get_json()
+    user_id = request_d["user_id"]
+    book_id = request_d["book_id"]
+    con = sql.connect("database.db")
+    cursor = con.cursor()
+    cursor.execute(
+        f"""INSERT into fvrts (book_id,user_id) VALUES (?,?)""", (book_id, user_id)
+    )
+    con.commit()
+    con.close()
+
+    response = app.response_class(
+        response=json.dumps({"status": True}), status=200, mimetype="application/json"
+    )
+    return response
+
+
+@app.route("/api/books/getFvrts", methods=["POST"])
+def getFvrts():
+    data = request.get_json()
+    user_id = data["user_id"]
+    conn = sql.connect("database.db")
+    book_ids = pd.read_sql(
+        f"""SELECT book_id from fvrts WHERE user_id={user_id} """, conn
+    )
+
+    book = book_ids["book_id"]
+    book = book.tolist()
+    id = [str(x) for x in book]
+
+    books_selected = books[books["book_id"].isin(id)][
+        [
+            "book_id",
+            "title",
+            "original_title",
+            "authors",
+            "original_publication_year",
+            "average_rating",
+            "large_image_url",
+            "image_url",
+        ]
+    ]
+    response = app.response_class(
+        response=json.dumps(books_selected.to_dict(orient="records")),
+        status=200,
+        mimetype="application/json",
+    )
+    return response
 
 
 def get_large_url(text):
@@ -38,7 +95,6 @@ def get_large_url(text):
     return "/".join(url)
 
 
-con = sql.connect("database.db")
 cur = con.cursor()
 books = pd.read_sql("SELECT * FROM books", con)
 books["large_image_url"] = books["small_image_url"].apply(lambda x: get_large_url(x))
@@ -254,14 +310,17 @@ def login():
             ),
         )
         account = cur.fetchone()
-        # print(account)
+
+        account_username = {"id": account[0], "username": account[1]}
     if account:
         # session['loggedin'] = True
         # session['id'] = account['id']
         # session['username'] = account['username']
         msg = "Logged in successfully !"
         response = app.response_class(
-            response=json.dumps(msg), status=200, mimetype="application/json"
+            response=json.dumps(account_username),
+            status=200,
+            mimetype="application/json",
         )
         return response
     else:
@@ -320,4 +379,4 @@ def register():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=False)
+    app.run(host="0.0.0.0", debug=True)
