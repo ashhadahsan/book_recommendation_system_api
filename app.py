@@ -54,6 +54,30 @@ def add_fvrt():
     return response
 
 
+@app.route("/api/books/removeFvrts", methods=["POST"])
+def rem_fvrt():
+    try:
+        request_d = request.get_json()
+        user_id = request_d["user_id"]
+        book_id = request_d["book_id"]
+        con = sql.connect("database.db")
+        cursor = con.cursor()
+        cursor.execute("""DELETE FROM fvrts WHERE book_id =? AND user_id =?""",(book_id,user_id))
+        con.commit()
+        con.close()
+
+        response = app.response_class(
+            response=json.dumps({"status": True}), status=200, mimetype="application/json"
+        )
+        return response
+    except:
+        response = app.response_class(
+            response=json.dumps({"status": False}), status=400, mimetype="application/json"
+        )
+        return response
+
+
+
 @app.route("/api/books/getFvrts", methods=["POST"])
 def getFvrts():
     data = request.get_json()
