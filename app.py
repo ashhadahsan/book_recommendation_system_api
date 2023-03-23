@@ -66,12 +66,13 @@ def getHistory():
     user_id = data["user_id"]
     conn = sql.connect("database.db")
     book_ids = pd.read_sql(
-        f"""SELECT distinct book_id from search_history WHERE user_id={user_id} limit 0,10 """,
+        f"""SELECT distinct book_id from search_history WHERE user_id={user_id}  """,
         conn,
     )
     print(book_ids)
 
     book = book_ids["book_id"]
+    book = book.tail(10)
     book = book.tolist()
     id = [str(x) for x in book]
 
