@@ -60,33 +60,14 @@ def add_fvrt():
     return response
 
 
-@app.route("/api/books/addHistory", methods=["POST"])
-def add_history():
-    request_d = request.get_json()
-    user_id = request_d["user_id"]
-    book_id = request_d["book_id"]
-    con = sql.connect("database.db")
-    cursor = con.cursor()
-    cursor.execute(
-        f"""INSERT into search_history  (book_id,user_id) VALUES (?,?)""",
-        (book_id, user_id),
-    )
-    con.commit()
-    con.close()
-
-    response = app.response_class(
-        response=json.dumps({"status": True}), status=200, mimetype="application/json"
-    )
-    return response
-
-
 @app.route("/api/books/getHistory", methods=["POST"])
 def getHistory():
     data = request.get_json()
     user_id = data["user_id"]
     conn = sql.connect("database.db")
     book_ids = pd.read_sql(
-        f"""SELECT book_id from search_history WHERE user_id={user_id} """, conn
+        f"""SELECT distinct book_id from search_history WHERE user_id={user_id} limit 0,10 """,
+        conn,
     )
     print(book_ids)
 
@@ -233,6 +214,7 @@ def find():
     data = request.get_json()
     param = data["query"]
     n = data["n"]
+    user_id = data["user_id"]
 
     search = pd.read_sql(
         f'''SELECT * from books where original_title like "%{param}%"''', con
@@ -242,30 +224,46 @@ def find():
     )
     search["original_title"] = search["original_title"].str.title()
     search = search.reset_index()
-    results = (
-        search.head(n)
-        .loc[
-            :,
-            [
-                "book_id",
-                "title",
-                "original_title",
-                "authors",
-                "original_publication_year",
-                "average_rating",
-                "large_image_url",
-                "image_url",
-            ],
-        ]
-        .to_dict(orient="records")
-    )
+    results = search.head(n).loc[
+        :,
+        [
+            "book_id",
+            "title",
+            "original_title",
+            "authors",
+            "original_publication_year",
+            "average_rating",
+            "large_image_url",
+            "image_url",
+        ],
+    ]
+    book_id = results["book_id"].values.tolist()
+    results = results.to_dict(orient="records")
     if len(results) > 0:
+        cursor = con.cursor()
+
+        for b in book_id:
+            cursor.execute(
+                f"""INSERT into search_history  (book_id,user_id) VALUES (?,?)""",
+                (b, user_id),
+            )
+            con.commit()
+        con.close()
+
         response = app.response_class(
             response=json.dumps(results), status=200, mimetype="application/json"
         )
         con.close()
         return response
     else:
+        book_id = results["book_id"].values.tolist()
+        for b in book_id:
+            cursor.execute(
+                f"""INSERT into search_history  (book_id,user_id) VALUES (?,?)""",
+                (b, user_id),
+            )
+            con.commit()
+        con.close()
         response = app.response_class(
             response=json.dumps("Not found"), status=404, mimetype="application/json"
         )
